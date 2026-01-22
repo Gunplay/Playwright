@@ -1,0 +1,315 @@
+# Запустити всі тести
+npx playwright test
+
+# Запустити конкретний файл
+npx playwright test tests/auth/sign-in.spec.js
+
+npx playwright test LocatingMultipleElem.spec.js --project chromium --headed
+# Запустити в headed mode (з відкритим браузером)
+npx playwright test --headed
+
+# Запустити в debug mode
+npx playwright test --debug
+
+# Запустити тільки на Chrome
+npx playwright test --project=chromium
+
+# Запустити з UI mode (інтерактивний режим)
+npx playwright test --ui
+
+# Відкрити HTML звіт
+npx playwright show-report
+
+# Генерація тестів (codegen)
+npx playwright codegen https://your-site.com
+===============================================================
+# 1. Покажіть список всіх знайдених тестів
+npx playwright test --list
+
+# 2. Запустіть з повним шляхом
+npx playwright test tests/LocatingMultipleElem.spec.js --headed
+
+# 3. Запустіть всі тести
+npx playwright test --headed
+
+# 4. Запустіть з grep (якщо в тесті є describe або test з назвою)
+npx playwright test --grep "LocateMultiple" --headed
+
+#2. Або запустіть з прапорцем для виводу консолі:
+npx playwright test LocatingMultipleElem --reporter=list
+
+
+===============================================================
+# Playwright - Найпопулярніші методи
+
+## 🔍 Локатори (Locators)
+
+### Пошук елементів
+```javascript
+// За CSS селектором
+page.locator('.class-name')
+page.locator('#id')
+page.locator('button')
+
+// За текстом
+page.locator('text=Login')
+page.getByText('Login')
+
+// За роллю
+page.getByRole('button', { name: 'Submit' })
+
+// За placeholder
+page.getByPlaceholder('Enter email')
+
+// За label
+page.getByLabel('Password')
+
+// За test-id
+page.locator('[data-testid="login-button"]')
+page.getByTestId('login-button')
+
+// XPath
+page.locator("//button[@id='submit']")
+
+// Множинні елементи
+page.locator('a').all() // Повертає масив
+page.locator('a').first()
+page.locator('a').last()
+page.locator('a').nth(2)
+page.locator('a').count() // Кількість
+```
+
+## 🖱️ Дії з елементами
+
+### Клік
+```javascript
+await page.click('button')
+await page.locator('button').click()
+await page.dblclick('button') // Подвійний клік
+await page.locator('button').click({ force: true }) // Примусовий клік
+```
+
+### Введення тексту
+```javascript
+await page.fill('#username', 'myuser')
+await page.locator('#username').fill('myuser')
+await page.type('#username', 'myuser') // Посимвольно
+await page.locator('#username').type('myuser', { delay: 100 })
+```
+
+### Очищення поля
+```javascript
+await page.locator('#username').clear()
+await page.fill('#username', '') // Альтернатива
+```
+
+### Вибір з dropdown
+```javascript
+await page.selectOption('select#colors', 'blue')
+await page.selectOption('select#colors', { label: 'Blue' })
+await page.selectOption('select#colors', { index: 2 })
+```
+
+### Checkbox і Radio
+```javascript
+await page.check('#agree') // Поставити галочку
+await page.uncheck('#agree') // Зняти галочку
+await page.locator('#option1').check()
+await page.locator('#option1').setChecked(true)
+```
+
+### Hover (наведення)
+```javascript
+await page.hover('button')
+await page.locator('button').hover()
+```
+
+### Upload файлу
+```javascript
+await page.setInputFiles('#upload', 'path/to/file.pdf')
+await page.locator('#upload').setInputFiles(['file1.pdf', 'file2.pdf'])
+```
+
+## 📝 Отримання даних
+
+### Текст
+```javascript
+const text = await page.locator('h1').textContent()
+const innerText = await page.locator('h1').innerText()
+const allText = await page.locator('h1').allTextContents() // Масив
+```
+
+### Атрибути
+```javascript
+const href = await page.locator('a').getAttribute('href')
+const value = await page.locator('input').inputValue()
+```
+
+### Видимість і стан
+```javascript
+await page.locator('button').isVisible()
+await page.locator('button').isHidden()
+await page.locator('button').isEnabled()
+await page.locator('button').isDisabled()
+await page.locator('#agree').isChecked()
+```
+
+## 🔄 Очікування (Waits)
+
+```javascript
+// Очікування елемента
+await page.waitForSelector('button')
+await page.locator('button').waitFor()
+await page.locator('button').waitFor({ state: 'visible' })
+await page.locator('button').waitFor({ state: 'hidden' })
+
+// Очікування навігації
+await page.waitForURL('**/dashboard')
+await page.waitForLoadState('domcontentloaded')
+await page.waitForLoadState('networkidle')
+
+// ОчікуванняTimeout
+await page.waitForTimeout(3000) // 3 секунди (не рекомендується)
+```
+
+## 🌐 Навігація
+
+```javascript
+// Перехід на сторінку
+await page.goto('https://example.com')
+await page.goto('https://example.com', { waitUntil: 'networkidle' })
+
+// Назад/Вперед
+await page.goBack()
+await page.goForward()
+await page.reload()
+
+// URL і Title
+const url = page.url()
+const title = await page.title()
+```
+
+## ✅ Assertions (Перевірки)
+
+```javascript
+// Текст
+await expect(page.locator('h1')).toHaveText('Welcome')
+await expect(page.locator('h1')).toContainText('Wel')
+
+// Видимість
+await expect(page.locator('button')).toBeVisible()
+await expect(page.locator('button')).toBeHidden()
+
+// Стан
+await expect(page.locator('button')).toBeEnabled()
+await expect(page.locator('button')).toBeDisabled()
+await expect(page.locator('#agree')).toBeChecked()
+
+// Атрибути
+await expect(page.locator('a')).toHaveAttribute('href', '/login')
+await expect(page.locator('input')).toHaveValue('test')
+
+// URL і Title
+await expect(page).toHaveURL(/.*dashboard/)
+await expect(page).toHaveTitle(/Dashboard/)
+
+// Кількість
+await expect(page.locator('li')).toHaveCount(5)
+```
+
+## 🎯 Робота з множинними елементами
+
+```javascript
+// Отримати всі елементи
+const links = await page.locator('a').all()
+
+// Перебрати елементи
+for (const link of links) {
+    const text = await link.textContent()
+    console.log(text)
+}
+
+// Кількість
+const count = await page.locator('a').count()
+
+// Фільтрація
+const visibleLinks = await page.locator('a').filter({ hasText: 'Click' })
+```
+
+## 🪟 Робота з фреймами та вікнами
+
+```javascript
+// Frame
+const frame = page.frame('frame-name')
+await frame.click('button')
+
+// Нове вікно
+const [newPage] = await Promise.all([
+    context.waitForEvent('page'),
+    page.click('a[target="_blank"]')
+])
+
+// Перемикання між вікнами
+const pages = context.pages()
+await pages[1].bringToFront()
+```
+
+## 📸 Screenshot і Video
+
+```javascript
+// Screenshot
+await page.screenshot({ path: 'screenshot.png' })
+await page.screenshot({ path: 'screenshot.png', fullPage: true })
+await page.locator('div.header').screenshot({ path: 'header.png' })
+
+// Video (налаштовується в config)
+// В playwright.config.js:
+use: {
+    video: 'on', // або 'retain-on-failure'
+}
+```
+
+## 🎭 Контекст браузера
+
+```javascript
+// Cookies
+await context.addCookies([{ name: 'token', value: 'abc123', url: 'https://example.com' }])
+const cookies = await context.cookies()
+
+// Local Storage
+await page.evaluate(() => localStorage.setItem('key', 'value'))
+const value = await page.evaluate(() => localStorage.getItem('key'))
+
+// Session Storage
+await page.evaluate(() => sessionStorage.setItem('key', 'value'))
+```
+
+## 🔧 Корисні методи
+
+```javascript
+// Виконання JavaScript
+await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+const result = await page.evaluate(() => document.title)
+
+// Pause для debug
+await page.pause() // Зупиняє виконання для дебагу
+
+// Скріншот елемента
+await page.locator('.error-message').screenshot({ path: 'error.png' })
+
+// Drag and Drop
+await page.locator('#source').dragTo(page.locator('#target'))
+
+// Клавіатура
+await page.keyboard.press('Enter')
+await page.keyboard.type('Hello World')
+await page.keyboard.down('Shift')
+```
+
+## 💡 Best Practices
+
+1. **Використовуйте `locator` замість `$` або `$$`** - це сучасний підхід
+2. **Auto-waiting** - Playwright автоматично чекає елементи
+3. **Використовуйте `getByRole`, `getByText`** для кращої читабельності
+4. **Уникайте `waitForTimeout`** - використовуйте `waitForSelector`
+5. **Page Object Model** - структуруйте код у класи

@@ -1,0 +1,48 @@
+Inside that directory, you can run several commands:
+
+npx playwright test
+Runs the end-to-end tests.
+
+npx playwright test --ui
+Starts the interactive UI mode.
+
+npx playwright test --project=chromium
+Runs the tests only on Desktop Chrome.
+
+npx playwright test example
+Runs the tests in a specific file.
+
+npx playwright test --debug
+Runs the tests in debug mode.
+
+npx playwright codegen
+Auto generate tests with Codegen.
+
+We suggest that you begin by typing:
+
+    npx playwright test
+
+# Запустить только "Login Page" тесты
+
+npx playwright test -g "Login Page"
+
+# Запустить только "Positive scenarios"
+
+npx playwright test -g "Positive scenarios"
+
+# Запустить с UI
+
+npx playwright test --ui
+
+```
+
+**При запуске увидишь структуру:**
+```
+
+✓ Login Page
+✓ Positive scenarios
+✓ should login with valid credentials
+✓ should show welcome message
+✓ Negative scenarios
+✓ should show error with invalid email
+✓ should show error with empty password
